@@ -49,3 +49,60 @@ nav{
   height: 20 vh;
   width: 100;
 }
+
+.container {
+  background-color: cyan;
+  padding: 30px;
+  text-align: center;
+  
+}
+.container section {
+  background-color: black;
+  /* margin: 200px auto; */
+}
+/* textarea,input
+{
+  border:none;
+  outline:none;
+} */
+
+.section input
+{
+  border:none;
+  outline:none;
+  height:20px;
+  width: 600px;
+  margin: 10px;
+} 
+
+.btn
+{
+ position:relative;
+ border: none;
+ cursor:pointer;
+}
+.btn::after
+{
+ content:'';
+ position: absolute;
+ width:100%;
+ height: 0.175rem;
+ background: red;
+ left:0;
+ bottom:0;
+ transition: 0.3s;
+}
+
+ .btn-center_animation::after{
+  transform: scale(0,1); 
+  /* transition: transfrom 0.3s ease; */
+
+} 
+.btn-center_animation:hover::after
+{
+  transform: scale(1,1);
+}
+
+
+
+
