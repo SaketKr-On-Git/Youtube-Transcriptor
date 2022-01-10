@@ -1,15 +1,27 @@
+# import sys 
+# sys.path.append('/opt/python/codefather/python_import/lib/')
+from flask import Flask,render_template,url_for,redirect,request
+
 from spacy_summarization import text_summarizer
 from gensim.summarization import summarize
 from nltk_summarization import nltk_summarizer
 import time
 import spacy
-nlp = spacy.load('en')
+import en_core_web_sm
+nlp = spacy.load('en_core_web_sm')
+import functions
+
+app=Flask(__name__)
+
+
+
+
 
 
 # Web Scraping Pkg
 from bs4 import BeautifulSoup
-# from urllib.request import urlopen
-from urllib import urlopen
+from urllib.request import urlopen
+from urllib.request import urlopen
 
 # Sumy Pkg
 from sumy.parsers.plaintext import PlaintextParser
@@ -17,6 +29,15 @@ from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lex_rank import LexRankSummarizer
 
 # Sumy 
+
+
+
+countries=['Italy','India','Spain','Sweden']
+print(functions.filter_countries(countries,'S'))
+print(functions.get_first_country(countries))
+
+
+
 def sumy_summary(docx):
 	parser = PlaintextParser.from_string(docx,Tokenizer("english"))
 	lex_summarizer = LexRankSummarizer()
@@ -25,8 +46,8 @@ def sumy_summary(docx):
 	result = ' '.join(summary_list)
 	return result
 
-from flask import Flask,render_template,url_for,redirect
-app=Flask(__name__)
+
+
 
 # Reading Time
 def readingTime(mytext):
@@ -43,7 +64,43 @@ def get_text(url):
 
 @app.route('/')
 def index():
-    return render_template("index.html")  
+    return render_template("index.html") 
+
+@app.route('/analyze',methods=['GET','POST'])
+def analyze():
+	start = time.time()
+	if request.method == 'POST':
+		rawtext = request.form['rawtext']
+		final_reading_time = readingTime(rawtext)
+		final_summary = text_summarizer(rawtext)
+		summary_reading_time = readingTime(final_summary)
+		end = time.time()
+		final_time = end-start
+	return render_template('index.html',ctext=rawtext,final_summary=final_summary,
+	final_time=final_time,final_reading_time=final_reading_time,
+	summary_reading_time=summary_reading_time)
+
+
+
+@app.route('/analyze_url',methods=['GET','POST'])
+def analyze_url():
+	start = time.time()
+	if request.method == 'POST':
+		raw_url = request.form['raw_url']
+		rawtext = get_text(raw_url)
+		final_reading_time = readingTime(rawtext)
+		final_summary = text_summarizer(rawtext)
+		summary_reading_time = readingTime(final_summary)
+		end = time.time()
+		final_time = end-start
+	return render_template('index.html',ctext=rawtext,final_summary=final_summary,final_time=final_time,
+	final_reading_time=final_reading_time,summary_reading_time=summary_reading_time)
+
+
+
+
+
+	
 
 if __name__=='__main__':
      app.run(debug=True)
